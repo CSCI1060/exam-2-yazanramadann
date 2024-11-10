@@ -14,3 +14,31 @@ function [result] = longestWord( inputFile )
 % print a descriptive error message and return the
 % value -1.
 %
+function [result] = longestWord(inputFile)
+    fid = fopen(inputFile, 'r');
+    if fid == -1
+        fprintf('Error: Unable to open the file %s\n', inputFile);
+        result = -1;
+        return;
+    end
+    
+    longestStreak = 0;
+    currentStreak = 0;
+    while ~feof(fid)
+        char = fread(fid, 1, '*char');
+        if isletter(char)
+            currentStreak = currentStreak + 1;
+        elseif any(char == [' ', '.', ',', '!', '?'])
+            if currentStreak > longestStreak
+                longestStreak = currentStreak;
+            end
+            currentStreak = 0;
+        end
+    end
+    % Final check for the longest streak at the end of file
+    if currentStreak > longestStreak
+        longestStreak = currentStreak;
+    end
+    fclose(fid);
+    result = longestStreak;
+end
